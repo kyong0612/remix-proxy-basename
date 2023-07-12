@@ -7,7 +7,6 @@
     "docker:compose": "docker-compose up -d --build --remove-orphans",
     "start": "remix-serve build",
     "typecheck": "tsc",
-    "postinstall": "patch-package"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^1.18.1",
@@ -25,7 +24,7 @@
     "@types/react-dom": "^18.0.11",
     "eslint": "^8.38.0",
     "typescript": "^5.0.4",
-    "patch-package": "^6.5.1"
+    "remix-flat-routes": "^0.5.10",
   },
   "engines": {
     "node": ">=14.0.0"
