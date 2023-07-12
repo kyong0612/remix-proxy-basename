@@ -1,5 +1,5 @@
 import { cssBundleHref } from '@remix-run/css-bundle';
-import type { LinksFunction } from '@remix-run/node';
+import { json, type LinksFunction, type LoaderArgs } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -13,19 +13,13 @@ export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
 ];
 
-type ImportMapProps = { basename: string };
+type AppContext = {
+  basename: string;
+};
 
-function ImportMap({ basename }: ImportMapProps) {
-  if (!basename) return null;
-
-  return (
-    <script
-      type="importmap"
-      dangerouslySetInnerHTML={{
-        __html: `{ "imports": {"/build/": "${basename}/build/"} }`,
-      }}
-    ></script>
-  );
+export async function loader({ context }: LoaderArgs) {
+  const { basename } = context as AppContext;
+  return json({ basename });
 }
 
 export default function App() {
@@ -36,7 +30,6 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <ImportMap basename="/shop" />
       </head>
       <body>
         <Outlet />
