@@ -1,11 +1,15 @@
+const { flatRoutes } = require("remix-flat-routes");
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
-  ignoredRouteFiles: ["**/.*"],
+  ignoredRouteFiles: ["**/*"],
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
   // serverBuildPath: "build/index.js",
-  // publicPath: "/build/",
+  publicPath: "/__remix__/build/",
   serverModuleFormat: "cjs",
+  routes: async (defineRoutes) => {
+    return flatRoutes("routes", defineRoutes);
+  },
   future: {
     v2_dev: true,
     v2_errorBoundary: true,
