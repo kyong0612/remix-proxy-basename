@@ -14,15 +14,17 @@ You'll see that by default, it will serve up the non-Remix app. Click on the `sh
 ## nginx
 We're using `nginx` to mount the Remix app at the `/shop` path. The requirements state that the base path is customizable, so this config file would be generated when the user configures this path.
 
-We also set a header `x-remix-basename` so the *shared* Remix app knows which basename it is mounted at.
+> We also set a header `x-remix-basename` so the *shared* Remix app knows which basename it is mounted at.
 
 We also create the rule for `/__remix__` route to always serve the Remix assets. This
 simplifies the process of setting up *remix.config.js* so it doesn't have to be changed
 when the user changes the path.
 
 Finally, we proxy everything else to the other app. In our example, this is a simple
-Express app running on port 3001 (*other-server.mjs*)
+Express app running on port 3001 (*other-server.mjs*).
 
+> We also set the header for the non-Remix app so it can use that to create links to the Remix
+> app without hard-coding the path.
 
 ```conf
 # nginx.conf
@@ -30,12 +32,14 @@ server {
   listen 8000;
 
   location /shop {
+    proxy_set_header x-remix-basename "/shop";
     proxy_pass http://host.docker.internal:3000/shop;
   }
   location /__remix__ {
     proxy_pass http://host.docker.internal:3000/__remix__;
   }
   location / {
+    proxy_set_header x-remix-basename "/shop";
     proxy_pass http://host.docker.internal:3001/;
   }
 
@@ -113,3 +117,14 @@ export function Link({ to, ...props }: LinkProps) {
   );
 }
 ```
+
+## Update basename
+
+To verify that we can update the basename and everything still works, there is an npm script `update-basename`.
+It uses the _nginx.conf.template_ file to write the updated _nginx.conf_ file.
+
+```bash
+npm run update-basename store
+```
+After you update the _nginx.conf_ file, you'll need to restart Docker. You should now
+refresh the browser and notice that the links to `/store` work the same as `/shop` did before.

@@ -1,5 +1,6 @@
 import type { V2_MetaFunction } from "@remix-run/node";
 import { Link } from "~/components/link";
+import { useRootLoaderData } from '~/utils/hooks';
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -8,6 +9,7 @@ export const meta: V2_MetaFunction = () => {
 };
 
 export default function Index() {
+  const {basename} = useRootLoaderData()
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Products List</h1>
@@ -16,7 +18,7 @@ export default function Index() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/shop">Shop</Link>
+          <Link to={basename}>Shop</Link>
         </li>
       </ul>
     </div>

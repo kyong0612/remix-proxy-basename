@@ -8,7 +8,8 @@
     "dev:server": "node other-server.mjs",
     "docker:compose": "docker-compose up -d --build --remove-orphans",
     "start": "remix-serve build",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "update-basename": "node update-basename.mjs"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^1.18.1",

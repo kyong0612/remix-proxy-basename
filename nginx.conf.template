@@ -1,15 +1,15 @@
 server {
   listen 8000;
 
-  location /shop {
-    proxy_set_header x-remix-basename "/shop";
-    proxy_pass http://host.docker.internal:3000/shop;
+  location /{{basename}} {
+    proxy_set_header x-remix-basename "/{{basename}}";
+    proxy_pass http://host.docker.internal:3000/{{basename}};
   }
   location /__remix__ {
     proxy_pass http://host.docker.internal:3000/__remix__;
   }
   location / {
-    proxy_set_header x-remix-basename "/shop";
+    proxy_set_header x-remix-basename "/{{basename}}";
     proxy_pass http://host.docker.internal:3001/;
   }
 
