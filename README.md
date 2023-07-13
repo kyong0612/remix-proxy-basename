@@ -1,6 +1,7 @@
 # Remix proxy basename
 
-This example uses a reverse proxy for both a Remix app that has been *mounted* as a sub-route of another app.
+This example uses a reverse proxy for both a non-Remix app and a Remix app that
+has been *mounted* as a sub-route of the other app.
 
 To run this app, make sure Docker is running.
 ```shell
@@ -11,8 +12,9 @@ Then browse to http://localhost:8000
 You'll see that by default, it will serve up the non-Remix app. Click on the `shop` link and you'll now be served the Remix app.
 
 ## nginx
-We're using `nginx` to mount the Remix app at the `/shop` path. The requirements state that the base path is customizable, so
-this config file would be generated when the user configures this path.
+We're using `nginx` to mount the Remix app at the `/shop` path. The requirements state that the base path is customizable, so this config file would be generated when the user configures this path.
+
+We also set a header `x-remix-basename` so the *shared* Remix app knows which basename it is mounted at.
 
 We also create the rule for `/__remix__` route to always serve the Remix assets. This
 simplifies the process of setting up *remix.config.js* so it doesn't have to be changed
@@ -77,36 +79,16 @@ app/routes
 </Routes>
 ```
 
-## Remix context
-The `basename` is passed to Remix via loader context.
-```js
-// remix-server.mjs
+## Remix basename
+The `basename` is passed to Remix via request header `x-remix-basename`
 
-function getLoadContext(req, res) {
-  const basename = req.cookies["basename"] ?? "/shop";
-  return { basename };
-}
-
-app.all(
-  "*",
-  process.env.NODE_ENV === "development"
-    ? createDevRequestHandler()
-    : createRequestHandler({
-        build,
-        mode: process.env.NODE_ENV,
-        getLoadContext, // set remix context
-      })
-);
-```
-The *root* `loader` gets the context and returns it as part of the loader data.
+The *root* `loader` gets the header value and returns it as part of the loader data.
 ```ts
 // root.tsx
-type AppContext = {
-  basename: string;
-};
 
-export async function loader({ context }: LoaderArgs) {
-  const { basename } = context as AppContext;
+export async function loader({ request }: LoaderArgs) {
+  const basename = request.headers.get('x-remix-basename');
+  invariant(basename, 'Missing basename header');
   return json({ basename });
 }
 ```

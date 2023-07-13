@@ -8,17 +8,15 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react';
+import invariant from 'tiny-invariant';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
 ];
 
-type AppContext = {
-  basename: string;
-};
-
-export async function loader({ context }: LoaderArgs) {
-  const { basename } = context as AppContext;
+export async function loader({ request }: LoaderArgs) {
+  const basename = request.headers.get('x-remix-basename');
+  invariant(basename, 'Missing basename header');
   return json({ basename });
 }
 
