@@ -6,7 +6,7 @@
     "dev": "npm run docker:compose && run-p dev:*",
     "dev:remix": "remix dev",
     "dev:server": "node other-server.mjs",
-    "docker:compose": "docker-compose up -d --build --remove-orphans",
+    "docker:compose": "docker compose up -d --build --remove-orphans",
     "start": "remix-serve build",
     "typecheck": "tsc",
     "update-basename": "node update-basename.mjs"
